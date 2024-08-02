@@ -1,10 +1,8 @@
 const express = require('express')
 const app = express()
-const env = require('.env')
 
-env.config()
 
-const PORT = process.env.PORT
+const PORT = 4000
 app.listen(PORT, () => {
     console.log(`The Port Is Listening on port ${PORT}`)
 })
