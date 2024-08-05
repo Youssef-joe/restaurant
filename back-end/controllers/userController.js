@@ -1,40 +1,47 @@
-const User = require('../models/userModel.js')
-const bcrypt = require('bcrypt')
+const User = require('../models/userModel.js');
+const bcrypt = require('bcrypt');
 
 let register = async (req, res) => {
-    try{
-        const {name, email, password} = req.body
+  try {
+    const { name, email, password } = req.body;
 
-        if (!name || !email || !password) {
-            throw("All Fields are Required To Be Filled")
-        }
-        let oldUser = User.findOne({email : userEmail})
-
-        if (oldUser) {
-            throw("this Email is already registered")
-        }
-
-        const hashedPass = bcrypt.hash(password, 10)
-
-        let newUser = new User({
-            username: name,
-            userEmail: email,
-            userPass: hashedPass
-        })
-        await newUser.save()
-        let done = await newUser.save()
-
-        if (done) {
-            res.status(200).json({
-                message: "user has been registered successfully",
-                data: done
-            })
-        }
-    } catch(er) {
-        console.log(er.message ? er.message : er)
+    // Check if all fields are provided
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'All fields are required to be filled' });
     }
-}
+
+    // Check if the user already exists
+    let oldUser = await User.findOne({ email });
+
+    if (oldUser) {
+      return res.status(400).json({ message: 'This email is already registered' });
+    }
+
+    // Hash the password
+    const hashedPass = await bcrypt.hash(password, 10);
+
+    // Create a new user
+    let newUser = new User({
+      username: name,
+      userEmail: email,
+      userPass: hashedPass,
+    });
+
+    // Save the user to the database
+    let savedUser = await newUser.save();
+
+    // Respond with success
+    res.status(201).json({
+      message: 'User has been registered successfully',
+      data: savedUser,
+    });
+
+  } catch (er) {
+    console.log(er.message ? er.message : er);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
 
 module.exports = {
-    register
-}
+  register
+};
