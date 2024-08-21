@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const mongoose = require('mongoose')
 const userRoutes = require('./routes/userRoutes.js')
+const adminRoutes = require('./routes/adminRoutes.js')
 const PORT = 4000
 const mongoURI = "mongodb://localhost:27017/bliss_rest"
 
@@ -15,3 +16,4 @@ app.listen(PORT, () => {
 mongoose.connect(mongoURI).then(()=> console.log("mongoDB is connected")).catch((er)=> console.log("Error : ", er.message ? er.message : er))
 
 app.use('/api', userRoutes)
+app.use('/api', adminRoutes)
